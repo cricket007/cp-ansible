@@ -1,3 +1,10 @@
+# Moving the configs to the top and referencing elsewhere is a
+# workaround for Ansible's hash_behaviour settings
+kafka_connect_config:
+  config.storage.replication.factor: 3
+  offset.storage.replication.factor: 3
+  status.storage.replication.factor: 3
+
 kafka:
   connect:
     distributed:
@@ -15,7 +22,7 @@ kafka:
         ssl.endpoint.identification.algorithm: ""
         consumer.ssl.endpoint.identification.algorithm: ""
         producer.ssl.endpoint.identification.algorithm: ""
-        config.storage.replication.factor: 3
+        config.storage.replication.factor: "{{ kafka_connect_config['config.storage.replication.factor'] }}"
         config.storage.topic: connect-configs
         group.id: connect-cluster
         internal.key.converter: org.apache.kafka.connect.json.JsonConverter
@@ -23,9 +30,9 @@ kafka:
         internal.value.converter: org.apache.kafka.connect.json.JsonConverter
         internal.value.converter.schemas.enable: false
         offset.flush.interval.ms: 10000
-        offset.storage.replication.factor: 3
+        offset.storage.replication.factor: "{{ kafka_connect_config['offset.storage.replication.factor'] }}"
         offset.storage.topic: connect-offsets
-        status.storage.replication.factor: 3
+        status.storage.replication.factor: "{{ kafka_connect_config['status.storage.replication.factor'] }}"
         status.storage.topic: connect-status
         key.converter: io.confluent.connect.avro.AvroConverter
         value.converter: io.confluent.connect.avro.AvroConverter
